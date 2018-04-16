@@ -1,0 +1,10 @@
+.table {
+  &-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+  &-item {
+    border: 1px solid #999;
+  }
+}

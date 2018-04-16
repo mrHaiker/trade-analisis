@@ -1,0 +1,28 @@
+<pre>{{candle?.close | number:'0.2-2'}} | {{ chartDate | date}} || {{MA}}</pre>
+
+<pre>{{sumAllPositions(1) | json}}</pre>
+<pre>Profit: {{profit | currency}}</pre>
+<pre>Max Posa: {{maxPosa}}</pre>
+<br>
+
+<div class="table-row">
+  <table class="table-item">
+    <tr *ngFor="let item of listTE">
+      <td style="padding: 0 20px;">{{item.open | currency}}</td>
+      <td style="padding: 0 20px;">{{item.close | currency}}</td>
+      <td style="padding: 0 20px;">{{item.trend === 1 ? 'Long' : item.trend === 2 ? 'Short' : 'Wait'}}</td>
+      <td style="padding: 0 20px;">{{item.status ? 'Active' : 'Close'}}</td>
+      <td style="padding: 0 20px;">{{item.profit | currency}}</td>
+    </tr>
+  </table>
+  <table class="table-item">
+    <tr *ngFor="let item of listMA">
+      <td style="padding: 0 20px;">{{item.open | currency}}</td>
+      <td style="padding: 0 20px;">{{item.close | currency}}</td>
+      <td style="padding: 0 20px;">{{item.trend === 1 ? 'Long' : item.trend === 2 ? 'Short' : 'Wait'}}</td>
+      <td style="padding: 0 20px;">{{item.status ? 'Active' : 'Close'}}</td>
+      <td style="padding: 0 20px;">{{item.profit | currency}}</td>
+    </tr>
+  </table>
+</div>
+
