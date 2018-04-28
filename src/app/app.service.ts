@@ -94,8 +94,9 @@ export class AppService {
       .filter(val => val.status === OrderStatus.ACTIVE).slice(-1)[0];
   }
 
-  get profit(): number {
+  getProfit(group: number): number {
     return this.positions
+      .filter(val => val.group === group)
       .map(val => val.profit)
       .reduce((acc, curr, i) => acc + curr) || 0;
   }
@@ -103,7 +104,7 @@ export class AppService {
 
 
   charts(): Observable<ChartData[]> {
-    return this.http.get('assets/data/public_15.json')
+    return this.http.get('assets/data/public_xmr_from_16.json')
       .map((val: ChartData[]) => this.chartData = val) as Observable<ChartData[]>;
   }
 

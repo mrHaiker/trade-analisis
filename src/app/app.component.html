@@ -1,21 +1,28 @@
-<pre>{{candle?.close | number:'0.2-2'}} | {{ chartDate | date}} || {{MA}}</pre>
+<pre>{{candle?.close | number:'0.2-5'}} | {{ chartDate | date}} || {{MA}}</pre>
 
 <pre>{{sumAllPositions(1) | json}}</pre>
-<pre>Profit: {{profit | currency}}</pre>
+<pre>Profit: {{profitDA + profitMA | currency}}</pre>
 <pre>Max Posa: {{maxPosa}}</pre>
+<pre>Max Lose: {{maxLose | percent}}</pre>
 <br>
 
 <div class="table-row">
   <table class="table-item">
+    <tr>
+      <td>{{profitDA | number:'0.2-5'}}</td>
+    </tr>
     <tr *ngFor="let item of listTE">
-      <td style="padding: 0 20px;">{{item.open | currency}}</td>
-      <td style="padding: 0 20px;">{{item.close | currency}}</td>
+      <td style="padding: 0 20px;">{{item.open | number:'0.2-5'}}</td>
+      <td style="padding: 0 20px;">{{item.close | number:'0.2-5'}}</td>
       <td style="padding: 0 20px;">{{item.trend === 1 ? 'Long' : item.trend === 2 ? 'Short' : 'Wait'}}</td>
       <td style="padding: 0 20px;">{{item.status ? 'Active' : 'Close'}}</td>
-      <td style="padding: 0 20px;">{{item.profit | currency}}</td>
+      <td style="padding: 0 20px;">{{item.profit | number:'0.2-5'}}</td>
     </tr>
   </table>
   <table class="table-item">
+    <tr>
+      <td>{{profitMA | currency}}</td>
+    </tr>
     <tr *ngFor="let item of listMA">
       <td style="padding: 0 20px;">{{item.open | currency}}</td>
       <td style="padding: 0 20px;">{{item.close | currency}}</td>

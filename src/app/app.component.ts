@@ -27,16 +27,18 @@ export class AppComponent implements OnInit {
   public money = 10000;
   // public listTE = this.service.getAllPosition(1);
   // public listMA = this.service.getAllPosition(2);
-  public profit: number;
+  public profitDA: number;
+  public profitMA: number;
   public maxPosa = 0;
   public MA: number;
+  public maxLose = 0;
 
   private params = {
-    step: 3,
+    step: 2,
     spread: .3,
     tax: .5,
-    limit: 10,
-    MA: 156,
+    limit: 1,
+    MA: 256,
   };
 
   public candle: ChartData = new ChartData();
@@ -77,7 +79,9 @@ export class AppComponent implements OnInit {
 
 
   cycle(candle: ChartData, i: number) {
-    this.profit = this.service.profit;
+    this.profitDA = this.service.getProfit(1);
+    this.profitMA = this.service.getProfit(2);
+    this.maxLose = (this.profitDA / candle.close) < this.maxLose ? this.profitDA / candle.close : this.maxLose ;
     if (!this.service.getSumOpenPosition(1)) {
       if (isUndefined(this.getPosa(1).open)) {
         this.getPosa(1).open = candle.close;
@@ -89,7 +93,7 @@ export class AppComponent implements OnInit {
         return;
       }
     }
-    this.MA = this.getAverageByCandle(i, this.params.MA);
+    this.MA = 0;
     this.viewDirection(candle, i);
   }
 
@@ -97,7 +101,7 @@ export class AppComponent implements OnInit {
     const isLong: boolean = this.service.trendIsLong(1);
     if (this.sumAllPositions(1) > this.maxPosa) this.maxPosa = this.sumAllPositions(1);
 
-    if (''.length) {
+    if ('3'.length) {
       if (this.more(candle, isLong)) {
         if (isLong && !!this.service.getSumOpenPosition(1)) {
           return this.service.closePosition(
@@ -153,52 +157,54 @@ export class AppComponent implements OnInit {
 
 
 
-    // For Moving Average
-    const isLongMA: boolean = this.service.trendIsLong(2);
-    const isShortMA: boolean = this.service.trendIsShort(2);
+    if (''.length) {
+      // For Moving Average
+      const isLongMA: boolean = this.service.trendIsLong(2);
+      const isShortMA: boolean = this.service.trendIsShort(2);
 
-    if (this.upOfAverage(candle, i)) {
-      if (!this.sumAllPositions(2)) {
-        return this.service.openPosition(
-          candle.open,
-          10,
-          Trend.LONG,
-          2
-        );
+      if (this.upOfAverage(candle, i)) {
+        if (!this.sumAllPositions(2)) {
+          return this.service.openPosition(
+            candle.open,
+            10,
+            Trend.LONG,
+            2
+          );
+        }
+        if (isShortMA) {
+          this.service.closePosition(
+            this.service.getFirstShort(2),
+            candle.open
+          );
+          this.service.openPosition(
+            candle.open,
+            10,
+            Trend.LONG,
+            2
+          );
+        }
       }
-      if (isShortMA) {
-        this.service.closePosition(
-          this.service.getFirstShort(2),
-          candle.open
-        );
-        this.service.openPosition(
-          candle.open,
-          10,
-          Trend.LONG,
-          2
-        );
-      }
-    }
-    if (this.downOfAverage(candle, i)) {
-      if (!this.sumAllPositions(2)) {
-        return this.service.openPosition(
-          candle.open,
-          10,
-          Trend.SHORT,
-          2
-        );
-      }
-      if (isLongMA) {
-        this.service.closePosition(
-          this.service.getFirstLong(2),
-          candle.open
-        );
-        this.service.openPosition(
-          candle.open,
-          10,
-          Trend.SHORT,
-          2
-        );
+      if (this.downOfAverage(candle, i)) {
+        if (!this.sumAllPositions(2)) {
+          return this.service.openPosition(
+            candle.open,
+            10,
+            Trend.SHORT,
+            2
+          );
+        }
+        if (isLongMA) {
+          this.service.closePosition(
+            this.service.getFirstLong(2),
+            candle.open
+          );
+          this.service.openPosition(
+            candle.open,
+            10,
+            Trend.SHORT,
+            2
+          );
+        }
       }
     }
   }
@@ -230,17 +236,26 @@ export class AppComponent implements OnInit {
 
   private upOfAverage(candle: ChartData, i: number): boolean {
     if (this.getAverageByCandle(i, this.params.MA) === 0) return;
-    return this.getAverageByCandle(i, 36) > this.getAverageByCandle(i, this.params.MA);
+    return this.getAverageByCandle(i, 42) > this.getAverageByCandle(i, this.params.MA);
   }
 
   private downOfAverage(candle: ChartData, i: number): boolean {
     if (this.getAverageByCandle(i, this.params.MA) === 0) return;
-    return this.getAverageByCandle(i, 36) < this.getAverageByCandle(i, this.params.MA);
+    return this.getAverageByCandle(i, 42) < this.getAverageByCandle(i, this.params.MA);
   }
 
   private getAverageByCandle(to: number, candle: number): number {
-    const data = this.chart.slice((to - candle), to).map(val => val.close);
+    const data = this.chart.slice((to - candle), to).map(val => val.open);
 
     return data.length ? data.reduce((acc, curr, i) => acc + curr) / candle : 0;
   }
 }
+
+// Продам ядро грецкого ореха. Янтарь. Урожай 2017 года.
+// 1/2 - 9кг
+// 1/4 - 8кг
+// Доставка Новой почтой по всей Украине наложенным платежем
+// Цена: 150 грн/кг
+// тел. 0639448857
+// email: dzuba_mihail@urk.net
+// Михаил Киевская обл.
